@@ -1,5 +1,5 @@
 # Arcade void arc tools
-***made by ronron18 (rinH*)*** :flushed:
+***made by ronron18 (rinH)*** :flushed:
 
 ## Tools Available
 1. Lightspeed void arc generator
