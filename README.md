@@ -5,6 +5,7 @@
 1. Lightspeed void arc generator
 2. Polygon trace art with animation
    - Timing based frames.
+   - TimingGroup based frames.
 3. More coming.
 
 ## Tools in Progress
