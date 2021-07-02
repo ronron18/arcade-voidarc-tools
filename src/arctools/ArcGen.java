@@ -14,6 +14,8 @@ public class ArcGen extends ArcGenSuper{
         tempo = Math.round(super.doublePrompt("BPM")*100)/100; // Prompts the user to input the tempo of the song, prompt function in super class.
         start = super.intPrompt("Start Point"); // Input the start point of the effect.
         end = super.intPrompt("End Point"); // Input the end point of the effect.
+        
+        
         menu(); // opens up the menu
         pw.close();
     }
@@ -27,9 +29,11 @@ public class ArcGen extends ArcGenSuper{
                 createLightspeedVoidArcs(); // Lightspeed styled void arc generator
                 break;
             case 2: 
-                createPolygonResizeAnim(); // Creates animated polygon
+                createPolygonResizeAnim(false); // Creates animated polygon
                 break;
-            case 3: break;
+            case 3: 
+                createPolygonResizeAnim(true); // Creates animated polygon
+                break;
             case 4: break;
             case 5: break;
             case 6: break;
@@ -77,8 +81,14 @@ public class ArcGen extends ArcGenSuper{
     }
     
     /* Creates polygon with resize and/or rotation animation. */
-    // will have to add timinggroup based framing functionality.
-    public void createPolygonResizeAnim() {
+    // make better code for start value modification (modify only the first frame if timing = 0)
+    public void createPolygonResizeAnim(boolean timingGroupFrames) {
+        /*
+         * Minimum value for start is 2, 0 is reserved for bpm assignment and 1 is reserved for 6969420 speed, goddammit schwarzer
+         * whose idea is it to use 0 timing as the song's initial tempo?
+         */
+        if(start <= 1) start = 2; 
+        
         double x = doublePrompt("Input x value");
         double y = doublePrompt("Input y value");
         double ySizeInit = doublePrompt("Input initial size of the polygon"); // initial size of polygon.
@@ -93,11 +103,20 @@ public class ArcGen extends ArcGenSuper{
         
         double points[][] = new double [sides][2]; // List of points of the polygon
         
-        pw.println("timinggroup(){");
-        pw.println("timing(0,"+tempo+",4.00);"); // Initial timing
-        pw.println("timing(1,6969420,4.00);");
+        if(!timingGroupFrames) {
+            pw.println("timinggroup(){");
+            pw.println("timing(0,"+tempo+",4.00);"); // Initial timing (Timing based)
+            pw.println("timing(1,6969420,4.00);");
+        } 
         
         for(int j = 1; j <= frameCount; j++) {
+            
+            if(timingGroupFrames) {
+                pw.println("timinggroup(){");
+                pw.println("timing(0,"+tempo+",4.00);"); // Initial timing (Timing group frame based)
+                pw.println("timing(1,6969420,4.00);");
+            } 
+            
             for(int i = 0; i < sides; i++) {
                 points[i][0] = - (ySizeInit + resizeInterval * j) * Math.sin(2 * i * PI / sides + angleInterval * j); // X axis
                 points[i][1] = (ySizeInit + resizeInterval * j) * Math.cos(2 * i * PI / sides + angleInterval * j); // Y axis
@@ -114,7 +133,9 @@ public class ArcGen extends ArcGenSuper{
             
             start = start + timingInterval; // Change start point
             
+            if(timingGroupFrames) pw.println("};"); 
+            
         }
-        pw.println("};");  
+        if(!timingGroupFrames) pw.println("};"); 
     }
 }

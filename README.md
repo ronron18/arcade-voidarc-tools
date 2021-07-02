@@ -8,7 +8,7 @@
 3. More coming.
 
 ## Tools in Progress
-- [ ] *Timing Group based* Polygon trace art animation.
+- [x] *Timing Group based* Polygon trace art animation.
 - [ ] *Timing based* Trace movement animation.
 - [ ] *Timing Group based* Trace movement animation.
 - [ ] 3d Cube trace art animation.
