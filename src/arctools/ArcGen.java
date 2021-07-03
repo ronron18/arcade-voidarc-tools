@@ -15,7 +15,6 @@ public class ArcGen extends ArcGenSuper{
         start = super.intPrompt("Start Point"); // Input the start point of the effect.
         end = super.intPrompt("End Point"); // Input the end point of the effect.
         
-        
         menu(); // opens up the menu
         pw.close();
     }
@@ -82,20 +81,14 @@ public class ArcGen extends ArcGenSuper{
     
     /* Creates polygon with resize and/or rotation animation. */
     // make better code for start value modification (modify only the first frame if timing = 0)
-    public void createPolygonResizeAnim(boolean timingGroupFrames) {
-        /*
-         * Minimum value for start is 2, 0 is reserved for bpm assignment and 1 is reserved for 6969420 speed, goddammit schwarzer
-         * whose idea is it to use 0 timing as the song's initial tempo?
-         */
-        if(start <= 1) start = 2; 
-        
-        double x = doublePrompt("Input x value");
-        double y = doublePrompt("Input y value");
+    public void createPolygonResizeAnim(boolean timingGroupFrames) { 
+        double x = doublePrompt("Input x value"); // X coordinate
+        double y = doublePrompt("Input y value"); // Y coordinate
         double ySizeInit = doublePrompt("Input initial size of the polygon"); // initial size of polygon.
         int sides = intPrompt("Input number of sides"); // Number of polygon side (eg. 3 = equi-triangle, 4 = square, etc.)
         int frameCount = intPrompt("Input number of frames"); // Number of frames, higher number recommended for more timing.
         double numRotation = doublePrompt("Input number of rotation/s");
-        double ySizeFinal = doublePrompt("Input Final Size");
+        double ySizeFinal = doublePrompt("Input Final Size"); // final size of polygon
         
         int timingInterval = (end - start) / frameCount;
         double angleInterval = numRotation * 2 * PI / frameCount;
@@ -122,18 +115,31 @@ public class ArcGen extends ArcGenSuper{
                 points[i][1] = (ySizeInit + resizeInterval * j) * Math.cos(2 * i * PI / sides + angleInterval * j); // Y axis
             }
             
-            pw.println("timing("+start+",0,4.00);"); // 0 timing on start
+            /*
+             * Minimum value for start is 2, 0 is reserved for bpm assignment and 1 is reserved for 6969420 speed, goddammit schwarzer
+             * whose idea is it to use 0 timing as the song's initial tempo?
+             */
+            if(start > 1) {
+                pw.println("timing("+start+",0,4.00);"); // 0 timing on start if current frame timing is more than 1
+            }
+            else {
+                pw.println("timing(2,0,4.00);"); // 0 timing on timing 2 if timing is at most 1
+            }
             
             for(int k = 0; k < sides-1; k++) { // Print out one frame
                 pw.println("arc("+start+","+(start + timingInterval - 1)+","+twoDP(points[k][0] * Y_TO_X + x)+","+twoDP(points[k+1][0] * Y_TO_X + x)+",s,"+twoDP(points[k][1] + y)+","+twoDP(points[k+1][1] + y)+",0,none,true);");
             }
             pw.println("arc("+start+","+(start + timingInterval - 1)+","+twoDP(points[0][0] * Y_TO_X + x)+","+twoDP(points[sides-1][0] * Y_TO_X + x)+",s,"+twoDP(points[0][1] + y)+","+twoDP(points[sides-1][1] + y)+",0,none,true);");
-            
-            pw.println("timing("+(int)(start + timingInterval - 1)+",6969420,4.00);"); // speed timing on end point
-            
+                       
             start = start + timingInterval; // Change start point
             
-            if(timingGroupFrames) pw.println("};"); 
+            if(timingGroupFrames) {
+                pw.println("timing("+(int)(start + 1)+",6969420,4.00);");
+                pw.println("};");
+            } 
+            else {
+                pw.println("timing("+(int)(start - 1)+",6969420,4.00);");
+            }
             
         }
         if(!timingGroupFrames) pw.println("};"); 
