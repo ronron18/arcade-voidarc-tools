@@ -80,7 +80,6 @@ public class ArcGen extends ArcGenSuper{
     }
     
     /* Creates polygon with resize and/or rotation animation. */
-    // make better code for start value modification (modify only the first frame if timing = 0)
     public void createPolygonResizeAnim(boolean timingGroupFrames) { 
         double x = doublePrompt("Input x value"); // X coordinate
         double y = doublePrompt("Input y value"); // Y coordinate
